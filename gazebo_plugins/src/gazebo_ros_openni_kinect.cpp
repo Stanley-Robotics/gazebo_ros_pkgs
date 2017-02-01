@@ -313,7 +313,10 @@ bool GazeboRosOpenniKinect::FillPointCloudHelper(
     uint32_t step_arg, void* data_arg)
 {
   sensor_msgs::PointCloud2Modifier pcd_modifier(point_cloud_msg);
+  pcd_modifier.setPointCloud2FieldsByString(1, "xyz");
+  /* disable rgb LAURENT
   pcd_modifier.setPointCloud2FieldsByString(2, "xyz", "rgb");
+  */
   // convert to flat array shape, we need to reconvert later
   pcd_modifier.resize(rows_arg*cols_arg);
   point_cloud_msg.is_dense = true;
@@ -321,7 +324,8 @@ bool GazeboRosOpenniKinect::FillPointCloudHelper(
   sensor_msgs::PointCloud2Iterator<float> iter_x(point_cloud_msg_, "x");
   sensor_msgs::PointCloud2Iterator<float> iter_y(point_cloud_msg_, "y");
   sensor_msgs::PointCloud2Iterator<float> iter_z(point_cloud_msg_, "z");
-  sensor_msgs::PointCloud2Iterator<uint8_t> iter_rgb(point_cloud_msg_, "rgb");
+  // disable rgb LAURENT
+  //sensor_msgs::PointCloud2Iterator<uint8_t> iter_rgb(point_cloud_msg_, "rgb");
 
   float* toCopyFrom = (float*)data_arg;
   int index = 0;
@@ -340,7 +344,7 @@ bool GazeboRosOpenniKinect::FillPointCloudHelper(
     if (rows_arg>1) pAngle = atan2( (double)j - 0.5*(double)(rows_arg-1), fl);
     else            pAngle = 0.0;
 
-    for (uint32_t i=0; i<cols_arg; i++, ++iter_x, ++iter_y, ++iter_z, ++iter_rgb)
+    for (uint32_t i=0; i<cols_arg; i++, ++iter_x, ++iter_y, ++iter_z)
     {
       double yAngle;
       if (cols_arg>1) yAngle = atan2( (double)i - 0.5*(double)(cols_arg-1), fl);
@@ -365,6 +369,7 @@ bool GazeboRosOpenniKinect::FillPointCloudHelper(
         point_cloud_msg.is_dense = false;
       }
 
+      /* disable rgb LAURENT
       // put image color data for each point
       uint8_t*  image_src = (uint8_t*)(&(this->image_msg_.data[0]));
       if (this->image_msg_.data.size() == rows_arg*cols_arg*3)
@@ -388,6 +393,7 @@ bool GazeboRosOpenniKinect::FillPointCloudHelper(
         iter_rgb[1] = 0;
         iter_rgb[2] = 0;
       }
+    */
     }
   }
 
